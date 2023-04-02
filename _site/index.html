@@ -1,0 +1,853 @@
+<!DOCTYPE html><html lang="en">
+  <head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Home - Mafioziks</title>
+
+<meta name="description" content="Personal project and blog page.
+">
+<link rel="canonical" href="/"><link rel="alternate" type="application/rss+xml" title="Mafioziks" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png"><link rel="manifest" href="/assets/site.webmanifest"><link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/assets/favicon.ico">
+
+<meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/assets/browserconfig.xml">
+
+<meta name="theme-color" content="#ffffff">
+<!-- end favicons snippet --><link rel="stylesheet" href="/assets/css/main.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css" ><!-- start custom head snippets -->
+
+<!-- end custom head snippets -->
+<script>(function() {
+  window.isArray = function(val) {
+    return Object.prototype.toString.call(val) === '[object Array]';
+  };
+  window.isString = function(val) {
+    return typeof val === 'string';
+  };
+
+  window.hasEvent = function(event) {
+    return 'on'.concat(event) in window.document;
+  };
+
+  window.isOverallScroller = function(node) {
+    return node === document.documentElement || node === document.body || node === window;
+  };
+
+  window.isFormElement = function(node) {
+    var tagName = node.tagName;
+    return tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA';
+  };
+
+  window.pageLoad = (function () {
+    var loaded = false, cbs = [];
+    window.addEventListener('load', function () {
+      var i;
+      loaded = true;
+      if (cbs.length > 0) {
+        for (i = 0; i < cbs.length; i++) {
+          cbs[i]();
+        }
+      }
+    });
+    return {
+      then: function(cb) {
+        cb && (loaded ? cb() : (cbs.push(cb)));
+      }
+    };
+  })();
+})();
+(function() {
+  window.throttle = function(func, wait) {
+    var args, result, thisArg, timeoutId, lastCalled = 0;
+
+    function trailingCall() {
+      lastCalled = new Date;
+      timeoutId = null;
+      result = func.apply(thisArg, args);
+    }
+    return function() {
+      var now = new Date,
+        remaining = wait - (now - lastCalled);
+
+      args = arguments;
+      thisArg = this;
+
+      if (remaining <= 0) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+        lastCalled = now;
+        result = func.apply(thisArg, args);
+      } else if (!timeoutId) {
+        timeoutId = setTimeout(trailingCall, remaining);
+      }
+      return result;
+    };
+  };
+})();
+(function() {
+  var Set = (function() {
+    var add = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (data[i] === item) {
+          return;
+        }
+      }
+      this.size ++;
+      data.push(item);
+      return data;
+    };
+
+    var Set = function(data) {
+      this.size = 0;
+      this._data = [];
+      var i;
+      if (data.length > 0) {
+        for (i = 0; i < data.length; i++) {
+          add.call(this, data[i]);
+        }
+      }
+    };
+    Set.prototype.add = add;
+    Set.prototype.get = function(index) { return this._data[index]; };
+    Set.prototype.has = function(item) {
+      var i, data = this._data;
+      for (i = 0; i < data.length; i++) {
+        if (this.get(i) === item) {
+          return true;
+        }
+      }
+      return false;
+    };
+    Set.prototype.is = function(map) {
+      if (map._data.length !== this._data.length) { return false; }
+      var i, j, flag, tData = this._data, mData = map._data;
+      for (i = 0; i < tData.length; i++) {
+        for (flag = false, j = 0; j < mData.length; j++) {
+          if (tData[i] === mData[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) { return false; }
+      }
+      return true;
+    };
+    Set.prototype.values = function() {
+      return this._data;
+    };
+    return Set;
+  })();
+
+  window.Lazyload = (function(doc) {
+    var queue = {js: [], css: []}, sources = {js: {}, css: {}}, context = this;
+    var createNode = function(name, attrs) {
+      var node = doc.createElement(name), attr;
+      for (attr in attrs) {
+        if (attrs.hasOwnProperty(attr)) {
+          node.setAttribute(attr, attrs[attr]);
+        }
+      }
+      return node;
+    };
+    var end = function(type, url) {
+      var s, q, qi, cbs, i, j, cur, val, flag;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        s[url] = true;
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (cur.urls.has(url)) {
+            qi = cur, val = qi.urls.values();
+            qi && (cbs = qi.callbacks);
+            for (flag = true, j = 0; j < val.length; j++) {
+              cur = val[j];
+              if (!s[cur]) {
+                flag = false;
+              }
+            }
+            if (flag && cbs && cbs.length > 0) {
+              for (j = 0; j < cbs.length; j++) {
+                cbs[j].call(context);
+              }
+              qi.load = true;
+            }
+          }
+        }
+      }
+    };
+    var load = function(type, urls, callback) {
+      var s, q, qi, node, i, cur,
+        _urls = typeof urls === 'string' ? new Set([urls]) : new Set(urls), val, url;
+      if (type === 'js' || type ==='css') {
+        s = sources[type], q = queue[type];
+        for (i = 0; i < q.length; i++) {
+          cur = q[i];
+          if (_urls.is(cur.urls)) {
+            qi = cur;
+            break;
+          }
+        }
+        val = _urls.values();
+        if (qi) {
+          callback && (qi.load || qi.callbacks.push(callback));
+          callback && (qi.load && callback());
+        } else {
+          q.push({
+            urls: _urls,
+            callbacks: callback ? [callback] : [],
+            load: false
+          });
+          for (i = 0; i < val.length; i++) {
+            node = null, url = val[i];
+            if (s[url] === undefined) {
+              (type === 'js' ) && (node = createNode('script', { src: url }));
+              (type === 'css') && (node = createNode('link', { rel: 'stylesheet', href: url }));
+              if (node) {
+                node.onload = (function(type, url) {
+                  return function() {
+                    end(type, url);
+                  };
+                })(type, url);
+                (doc.head || doc.body).appendChild(node);
+                s[url] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+    return {
+      js: function(url, callback) {
+        load('js', url, callback);
+      },
+      css: function(url, callback) {
+        load('css', url, callback);
+      }
+    };
+  })(this.document);
+})();
+</script><script>
+  (function() {
+    var TEXT_VARIABLES = {
+      version: '2.2.6',
+      sources: {
+        font_awesome: 'https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.css',
+        jquery: 'https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js',
+        leancloud_js_sdk: '//cdn.jsdelivr.net/npm/leancloud-storage@3.13.2/dist/av-min.js',
+        chart: 'https://cdn.bootcss.com/Chart.js/2.7.2/Chart.bundle.min.js',
+        gitalk: {
+          js: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.js',
+          css: 'https://cdn.bootcss.com/gitalk/1.2.2/gitalk.min.css'
+        },
+        valine: 'https://unpkg.com/valine/dist/Valine.min.js',
+        mathjax: 'https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML',
+        mermaid: 'https://cdn.bootcss.com/mermaid/8.0.0-rc.8/mermaid.min.js'
+      },
+      site: {
+        toc: {
+          selectors: 'h1,h2,h3'
+        }
+      },
+      paths: {
+        search_js: '/assets/search.js'
+      }
+    };
+    window.TEXT_VARIABLES = TEXT_VARIABLES;
+  })();
+</script>
+</head>
+  <body>
+    <div class="root" data-is-touch="false">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport cell cell--auto">
+
+      <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
+      <div class="header__title">
+        <div class="header__brand"><svg xmlns="http://www.w3.org/2000/svg" id="svg5" version="1.1" viewBox="0 0 12.7 12.7" height="48" width="48">
+  
+  <defs id="defs2"></defs>
+  <g id="layer1">
+    <g transform="matrix(0.84976996,0,0,0.84976996,0.13234542,0.32309328)" id="g27146">
+      <path id="path26893" d="M 6.493171,14.412819 C 4.065432,14.118615 1.952448,12.651729 0.84619305,10.49254 c -0.557776,-1.0886659 -0.809936,-2.1262719 -0.811898,-3.3408509 -8.62e-4,-0.554918 0.0256,-0.856106 0.120881,-1.37408 0.448551,-2.438432 2.17924995,-4.536749 4.49262495,-5.44690004 0.894516,-0.351932 1.706748,-0.504884 2.681113,-0.504884 1.168709,0 2.196382,0.236819 3.209787,0.739665 0.749658,0.371979 1.327745,0.78775204 1.92782,1.38653104 0.691213,0.689725 1.175505,1.390848 1.546818,2.239373 0.789276,1.803667 0.823727,3.835967 0.09601,5.664232 -0.650571,1.6344629 -1.891046,2.9946089 -3.465488,3.7998109 -0.801927,0.410122 -1.605352,0.65295 -2.510811,0.758867 -0.400761,0.04688 -1.247108,0.04611 -1.639882,-0.0015 z" style="fill:#b3b3b3;stroke-width:0.0251749"></path>
+      <g transform="translate(-68.126467,-49.314025)" style="font-size:10.5833px;line-height:1.25;stroke-width:0.264583" id="text2541" aria-label="W">
+        <path id="path26384" style="font-weight:bold;font-family:Amiri;-inkscape-font-specification:'Amiri Bold'" d="m 71.833816,55.251598 q 0.328082,0 0.740831,-0.01058 0.423332,-0.02117 0.719664,-0.05292 0.03175,0.04233 0.03175,0.1905 0.01058,0.137583 -0.03175,0.190499 -0.0635,0 -0.222249,0.02117 -0.148167,0.01058 -0.275166,0.07408 -0.127,0.05292 -0.127,0.179916 0,0.127 0.07408,0.338666 0.08467,0.211666 0.169333,0.433915 0.169333,0.476248 0.349249,0.973663 0.179916,0.486832 0.328082,0.910164 0.148166,0.412749 0.243416,0.677331 0.09525,0.254 0.09525,0.254 0,0 0.08467,-0.232833 0.08467,-0.232833 0.211666,-0.613831 0.137583,-0.380999 0.296333,-0.825498 0.158749,-0.455082 0.317499,-0.888997 0.158749,-0.444499 0.275165,-0.783164 0.127,-0.349249 0.1905,-0.518582 0.05292,-0.148166 0.137583,-0.264582 0.09525,-0.116417 0.179916,-0.116417 0.07408,0 0.126999,0.15875 0.201083,0.518582 0.433916,1.12183 0.243416,0.603248 0.476248,1.195913 0.232833,0.592664 0.423332,1.079496 0.201083,0.486832 0.317499,0.783164 0.116416,0.285749 0.116416,0.285749 0,0 0.0635,-0.201082 0.0635,-0.211666 0.169333,-0.539749 0.105833,-0.338665 0.222249,-0.719664 0.127,-0.391582 0.243416,-0.751414 0.116417,-0.359832 0.201083,-0.613832 0.08467,-0.264582 0.105833,-0.349249 0.0635,-0.201082 0.137583,-0.423332 0.07408,-0.232832 0.07408,-0.402165 0,-0.09525 -0.179916,-0.148166 -0.169333,-0.05292 -0.359832,-0.07408 -0.1905,-0.02117 -0.264583,-0.02117 -0.04233,-0.05292 -0.04233,-0.190499 0.01058,-0.148166 0.04233,-0.1905 0.370416,0.03175 0.613832,0.05292 0.253999,0.01058 0.613831,0.01058 0.338665,0 0.582081,-0.02117 0.254,-0.03175 0.571499,-0.04233 0.03175,0.04233 0.03175,0.1905 0.01058,0.137583 -0.03175,0.190499 -0.0635,0 -0.211666,0.01058 -0.148167,0.01058 -0.296333,0.05292 -0.148166,0.03175 -0.211666,0.116416 -0.116416,0.15875 -0.232832,0.370416 -0.105833,0.211666 -0.1905,0.486832 -0.243416,0.730247 -0.444498,1.344079 -0.201083,0.603248 -0.402166,1.174746 -0.190499,0.571498 -0.402165,1.174746 -0.201083,0.592665 -0.444499,1.312329 -0.07408,0.1905 -0.201082,0.359832 -0.116417,0.169333 -0.211666,0.169333 -0.07408,0 -0.116417,-0.05292 -0.04233,-0.04233 -0.08467,-0.09525 L 75.156966,57.70692 q 0,0 -0.08467,0.253999 -0.08467,0.253999 -0.232832,0.677331 -0.137583,0.423332 -0.317499,0.93133 -0.169333,0.507999 -0.349249,1.037164 -0.179916,0.518582 -0.328083,0.96308 -0.02117,0.05292 -0.08467,0.201083 -0.0635,0.137583 -0.137583,0.253999 -0.07408,0.116416 -0.137583,0.116416 -0.07408,0 -0.116416,-0.05292 -0.04233,-0.04233 -0.08467,-0.09525 L 71.42105,56.754419 q -0.07408,-0.232833 -0.179916,-0.455082 -0.105833,-0.232833 -0.179916,-0.391582 -0.0635,-0.137583 -0.211666,-0.201083 -0.137583,-0.07408 -0.275166,-0.105833 -0.137583,-0.03175 -0.211666,-0.03175 -0.04233,-0.05292 -0.03175,-0.190499 0,-0.148166 0.03175,-0.1905 0.306916,0.03175 0.719664,0.05292 0.423332,0.01058 0.751415,0.01058 z"></path>
+      </g>
+      <g transform="translate(-68.126467,-49.314025)" style="font-size:10.5833px;line-height:1.25;stroke-width:0.264583" id="text14743" aria-label="T">
+        <path id="path25028" style="font-weight:bold;font-family:Amiri;-inkscape-font-specification:Amiri" d="m 80.042396,53.911923 c 0.246945,-3.01e-4 0.433916,-0.01411 0.560915,-0.04233 0.134055,-0.03528 0.236361,-0.06703 0.306916,-0.09525 0.07055,-0.03528 0.137583,-0.05292 0.201083,-0.05292 0.04233,0 0.06703,0.0035 0.07408,0.01058 0.01411,0 0.03175,0.0071 0.05292,0.02117 l 0.304315,2.170501 c -0.01411,0.01411 -0.05645,0.03175 -0.127,0.05292 -0.0635,0.01411 -0.119944,0.02117 -0.169332,0.02117 -0.0635,0 -0.09878,-0.01764 -0.105833,-0.05292 -0.03528,-0.225777 -0.105835,-0.437443 -0.211666,-0.634998 -0.105833,-0.197555 -0.236361,-0.356305 -0.391582,-0.476249 -0.155222,-0.126999 -0.321027,-0.190499 -0.497416,-0.190499 H 76.17821 l 0.0084,4.104218 c -0.43769,-1.466007 -0.647926,-0.694977 -1.484308,-1.212968 l 0.02602,-2.89125 -4.114987,0.01157 c -0.176389,4.96e-4 -0.342194,0.0635 -0.497415,0.190499 -0.155222,0.119944 -0.285749,0.278694 -0.391582,0.476249 -0.105833,0.197555 -0.176389,0.409221 -0.211666,0.634998 -0.0071,0.03528 -0.04233,0.05292 -0.105833,0.05292 -0.04939,0 -0.109359,-0.0071 -0.179916,-0.02117 -0.0635,-0.02117 -0.102306,-0.03881 -0.116417,-0.05292 l 0.246017,-2.170501 c 0.02117,-0.01411 0.03528,-0.02117 0.04233,-0.02117 0.01411,-0.0071 0.04234,-0.01058 0.08467,-0.01058 0.0635,0 0.130527,0.01764 0.201082,0.05292 0.07055,0.02822 0.169333,0.05997 0.296333,0.09525 0.134055,0.02822 0.324554,0.04263 0.571498,0.04233 z"></path>
+      </g>
+      <g transform="translate(-67.671803,-49.141453)" style="font-size:10.5833px;line-height:1.25;fill:#ffffff;stroke-width:0.264583" id="text2541-8" aria-label="W">
+        <path id="path26384-9" style="font-weight:bold;font-family:Amiri;-inkscape-font-specification:'Amiri Bold';fill:#ffffff" d="m 71.833816,55.251598 q 0.328082,0 0.740831,-0.01058 0.423332,-0.02117 0.719664,-0.05292 0.03175,0.04233 0.03175,0.1905 0.01058,0.137583 -0.03175,0.190499 -0.0635,0 -0.222249,0.02117 -0.148167,0.01058 -0.275166,0.07408 -0.127,0.05292 -0.127,0.179916 0,0.127 0.07408,0.338666 0.08467,0.211666 0.169333,0.433915 0.169333,0.476248 0.349249,0.973663 0.179916,0.486832 0.328082,0.910164 0.148166,0.412749 0.243416,0.677331 0.09525,0.254 0.09525,0.254 0,0 0.08467,-0.232833 0.08467,-0.232833 0.211666,-0.613831 0.137583,-0.380999 0.296333,-0.825498 0.158749,-0.455082 0.317499,-0.888997 0.158749,-0.444499 0.275165,-0.783164 0.127,-0.349249 0.1905,-0.518582 0.05292,-0.148166 0.137583,-0.264582 0.09525,-0.116417 0.179916,-0.116417 0.07408,0 0.126999,0.15875 0.201083,0.518582 0.433916,1.12183 0.243416,0.603248 0.476248,1.195913 0.232833,0.592664 0.423332,1.079496 0.201083,0.486832 0.317499,0.783164 0.116416,0.285749 0.116416,0.285749 0,0 0.0635,-0.201082 0.0635,-0.211666 0.169333,-0.539749 0.105833,-0.338665 0.222249,-0.719664 0.127,-0.391582 0.243416,-0.751414 0.116417,-0.359832 0.201083,-0.613832 0.08467,-0.264582 0.105833,-0.349249 0.0635,-0.201082 0.137583,-0.423332 0.07408,-0.232832 0.07408,-0.402165 0,-0.09525 -0.179916,-0.148166 -0.169333,-0.05292 -0.359832,-0.07408 -0.1905,-0.02117 -0.264583,-0.02117 -0.04233,-0.05292 -0.04233,-0.190499 0.01058,-0.148166 0.04233,-0.1905 0.370416,0.03175 0.613832,0.05292 0.253999,0.01058 0.613831,0.01058 0.338665,0 0.582081,-0.02117 0.254,-0.03175 0.571499,-0.04233 0.03175,0.04233 0.03175,0.1905 0.01058,0.137583 -0.03175,0.190499 -0.0635,0 -0.211666,0.01058 -0.148167,0.01058 -0.296333,0.05292 -0.148166,0.03175 -0.211666,0.116416 -0.116416,0.15875 -0.232832,0.370416 -0.105833,0.211666 -0.1905,0.486832 -0.243416,0.730247 -0.444498,1.344079 -0.201083,0.603248 -0.402166,1.174746 -0.190499,0.571498 -0.402165,1.174746 -0.201083,0.592665 -0.444499,1.312329 -0.07408,0.1905 -0.201082,0.359832 -0.116417,0.169333 -0.211666,0.169333 -0.07408,0 -0.116417,-0.05292 -0.04233,-0.04233 -0.08467,-0.09525 L 75.156966,57.70692 q 0,0 -0.08467,0.253999 -0.08467,0.253999 -0.232832,0.677331 -0.137583,0.423332 -0.317499,0.93133 -0.169333,0.507999 -0.349249,1.037164 -0.179916,0.518582 -0.328083,0.96308 -0.02117,0.05292 -0.08467,0.201083 -0.0635,0.137583 -0.137583,0.253999 -0.07408,0.116416 -0.137583,0.116416 -0.07408,0 -0.116416,-0.05292 -0.04233,-0.04233 -0.08467,-0.09525 L 71.42105,56.754419 q -0.07408,-0.232833 -0.179916,-0.455082 -0.105833,-0.232833 -0.179916,-0.391582 -0.0635,-0.137583 -0.211666,-0.201083 -0.137583,-0.07408 -0.275166,-0.105833 -0.137583,-0.03175 -0.211666,-0.03175 -0.04233,-0.05292 -0.03175,-0.190499 0,-0.148166 0.03175,-0.1905 0.306916,0.03175 0.719664,0.05292 0.423332,0.01058 0.751415,0.01058 z"></path>
+      </g>
+      <g transform="translate(-67.671803,-49.141453)" style="font-size:10.5833px;line-height:1.25;fill:#ffffff;stroke-width:0.264583" id="text14743-7" aria-label="T">
+        <path id="path25028-3" style="font-weight:bold;font-family:Amiri;-inkscape-font-specification:Amiri;fill:#ffffff" d="m 80.042396,53.911923 c 0.246945,-3.01e-4 0.433916,-0.01411 0.560915,-0.04233 0.134055,-0.03528 0.236361,-0.06703 0.306916,-0.09525 0.07055,-0.03528 0.137583,-0.05292 0.201083,-0.05292 0.04233,0 0.06703,0.0035 0.07408,0.01058 0.01411,0 0.03175,0.0071 0.05292,0.02117 l 0.304315,2.170501 c -0.01411,0.01411 -0.05645,0.03175 -0.127,0.05292 -0.0635,0.01411 -0.119944,0.02117 -0.169332,0.02117 -0.0635,0 -0.09878,-0.01764 -0.105833,-0.05292 -0.03528,-0.225777 -0.105835,-0.437443 -0.211666,-0.634998 -0.105833,-0.197555 -0.236361,-0.356305 -0.391582,-0.476249 -0.155222,-0.126999 -0.321027,-0.190499 -0.497416,-0.190499 H 76.17821 l 0.0084,4.104218 c -0.43769,-1.466007 -0.647926,-0.694977 -1.484308,-1.212968 l 0.02602,-2.89125 -4.114987,0.01157 c -0.176389,4.96e-4 -0.342194,0.0635 -0.497415,0.190499 -0.155222,0.119944 -0.285749,0.278694 -0.391582,0.476249 -0.105833,0.197555 -0.176389,0.409221 -0.211666,0.634998 -0.0071,0.03528 -0.04233,0.05292 -0.105833,0.05292 -0.04939,0 -0.109359,-0.0071 -0.179916,-0.02117 -0.0635,-0.02117 -0.102306,-0.03881 -0.116417,-0.05292 l 0.246017,-2.170501 c 0.02117,-0.01411 0.03528,-0.02117 0.04233,-0.02117 0.01411,-0.0071 0.04234,-0.01058 0.08467,-0.01058 0.0635,0 0.130527,0.01764 0.201082,0.05292 0.07055,0.02822 0.169333,0.05997 0.296333,0.09525 0.134055,0.02822 0.324554,0.04263 0.571498,0.04233 z"></path>
+      </g>
+    </g>
+  </g>
+</svg>
+<a title="Personal project and blog page.
+" href="/">Mafioziks</a></div><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></div><nav class="navigation">
+        <ul><li class="navigation__item"><a href="/archive.html">Archive</a></li><li class="navigation__item"><a href="/about.html">About</a></li><li><button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button></li></ul>
+      </nav></div>
+  </header>
+</div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
+
+              <div class="col-aside d-print-none js-col-aside"></div>
+
+              <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
+
+<!-- end custom main top snippet -->
+<article itemscope itemtype="http://schema.org/WebPage"><header style="display:none;"><h1>Home</h1></header><meta itemprop="headline" content="Home"><meta itemprop="author" content="Toms Teteris"/><div class="js-article-content"><div class="layout--home"></div>
+<script>/*(function () {
+
+})();*/
+</script>
+
+
+
+
+</div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
+
+<!-- end custom main bottom snippet -->
+</div>
+            </div></div></div><div class="page__footer d-print-none">
+<footer class="footer py-4 js-page-footer">
+  <div class="main"><div itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Toms Teteris"><meta itemprop="url" content="/"><meta itemprop="description" content="Developer, idea person."><div class="footer__author-links"><div class="author-links">
+  <ul class="menu menu--nowrap menu--inline"></ul>
+</div>
+</div>
+    </div><div class="site-info mt-2">
+      <div>© Mafioziks 2021,
+        Powered by <a title="Jekyll is a simple, blog-aware, static site generator." href="http://jekyllrb.com/">Jekyll</a> & <a
+        title="TeXt is a super customizable Jekyll theme." href="https://github.com/kitian616/jekyll-TeXt-theme">TeXt Theme</a>.
+      </div>
+    </div>
+  </div>
+</footer>
+</div></div>
+    </div><script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $body = $('body'), $window = $(window);
+    var $pageRoot = $('.js-page-root'), $pageMain = $('.js-page-main');
+    var activeCount = 0;
+    function modal(options) {
+      var $root = this, visible, onChange, hideWhenWindowScroll = false;
+      var scrollTop;
+      function setOptions(options) {
+        var _options = options || {};
+        visible = _options.initialVisible === undefined ? false : show;
+        onChange = _options.onChange;
+        hideWhenWindowScroll = _options.hideWhenWindowScroll;
+      }
+      function init() {
+        setState(visible);
+      }
+      function setState(isShow) {
+        if (isShow === visible) {
+          return;
+        }
+        visible = isShow;
+        if (visible) {
+          activeCount++;
+          scrollTop = $(window).scrollTop() || $pageMain.scrollTop();
+          $root.addClass('modal--show');
+          $pageMain.scrollTop(scrollTop);
+          activeCount === 1 && ($pageRoot.addClass('show-modal'), $body.addClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.on('scroll', hide);
+          $window.on('keyup', handleKeyup);
+        } else {
+          activeCount > 0 && activeCount--;
+          $root.removeClass('modal--show');
+          $window.scrollTop(scrollTop);
+          activeCount === 0 && ($pageRoot.removeClass('show-modal'), $body.removeClass('of-hidden'));
+          hideWhenWindowScroll && window.hasEvent('touchstart') && $window.off('scroll', hide);
+          $window.off('keyup', handleKeyup);
+        }
+        onChange && onChange(visible);
+      }
+      function show() {
+        setState(true);
+      }
+      function hide() {
+        setState(false);
+      }
+      function handleKeyup(e) {
+        // Char Code: 27  ESC
+        if (e.which ===  27) {
+          hide();
+        }
+      }
+      setOptions(options);
+      init();
+      return {
+        show: show,
+        hide: hide,
+        $el: $root
+      };
+    }
+    $.fn.modal = modal;
+  });
+})();
+</script><div class="modal modal--overflow page__search-modal d-print-none js-page-search-modal"><script>
+(function () {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    // search panel
+    var search = (window.search || (window.search = {}));
+    var useDefaultSearchBox = window.useDefaultSearchBox === undefined ?
+      true : window.useDefaultSearchBox ;
+
+    var $searchModal = $('.js-page-search-modal');
+    var $searchToggle = $('.js-search-toggle');
+    var searchModal = $searchModal.modal({ onChange: handleModalChange, hideWhenWindowScroll: true });
+    var modalVisible = false;
+    search.searchModal = searchModal;
+
+    var $searchBox = null;
+    var $searchInput = null;
+    var $searchClear = null;
+
+    function getModalVisible() {
+      return modalVisible;
+    }
+    search.getModalVisible = getModalVisible;
+
+    function handleModalChange(visible) {
+      modalVisible = visible;
+      if (visible) {
+        search.onShow && search.onShow();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].focus();
+      } else {
+        search.onShow && search.onHide();
+        useDefaultSearchBox && $searchInput[0] && $searchInput[0].blur();
+        setTimeout(function() {
+          useDefaultSearchBox && ($searchInput.val(''), $searchBox.removeClass('not-empty'));
+          search.clear && search.clear();
+          window.pageAsideAffix && window.pageAsideAffix.refresh();
+        }, 400);
+      }
+    }
+
+    $searchToggle.on('click', function() {
+      modalVisible ? searchModal.hide() : searchModal.show();
+    });
+    // Char Code: 83  S, 191 /
+    $(window).on('keyup', function(e) {
+      if (!modalVisible && !window.isFormElement(e.target || e.srcElement) && (e.which === 83 || e.which === 191)) {
+        modalVisible || searchModal.show();
+      }
+    });
+
+    if (useDefaultSearchBox) {
+      $searchBox = $('.js-search-box');
+      $searchInput = $searchBox.children('input');
+      $searchClear = $searchBox.children('.js-icon-clear');
+      search.getSearchInput = function() {
+        return $searchInput.get(0);
+      };
+      search.getVal = function() {
+        return $searchInput.val();
+      };
+      search.setVal = function(val) {
+        $searchInput.val(val);
+      };
+
+      $searchInput.on('focus', function() {
+        $(this).addClass('focus');
+      });
+      $searchInput.on('blur', function() {
+        $(this).removeClass('focus');
+      });
+      $searchInput.on('input', window.throttle(function() {
+        var val = $(this).val();
+        if (val === '' || typeof val !== 'string') {
+          search.clear && search.clear();
+        } else {
+          $searchBox.addClass('not-empty');
+          search.onInputNotEmpty && search.onInputNotEmpty(val);
+        }
+      }, 400));
+      $searchClear.on('click', function() {
+        $searchInput.val(''); $searchBox.removeClass('not-empty');
+        search.clear && search.clear();
+      });
+    }
+  });
+})();
+</script><div class="search search--dark">
+  <div class="main">
+    <div class="search__header">Search</div>
+    <div class="search-bar">
+      <div class="search-box js-search-box">
+        <div class="search-box__icon-search"><i class="fas fa-search"></i></div>
+        <input type="text" />
+        <div class="search-box__icon-clear js-icon-clear">
+          <a><i class="fas fa-times"></i></a>
+        </div>
+      </div>
+      <button class="button button--theme-dark button--pill search__cancel js-search-toggle">
+        Cancel</button>
+    </div>
+    <div class="search-result js-search-result"></div>
+  </div>
+</div>
+<script>var SOURCES = window.TEXT_VARIABLES.sources;
+var PAHTS = window.TEXT_VARIABLES.paths;
+window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
+  var search = (window.search || (window.search = {}));
+  var searchData = window.TEXT_SEARCH_DATA || {};
+
+  function memorize(f) {
+    var cache = {};
+    return function () {
+      var key = Array.prototype.join.call(arguments, ',');
+      if (key in cache) return cache[key];
+      else return cache[key] = f.apply(this, arguments);
+    };
+  }
+
+  /// search
+  function searchByQuery(query) {
+    var i, j, key, keys, cur, _title, result = {};
+    keys = Object.keys(searchData);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      for (j = 0; j < searchData[key].length; j++) {
+        cur = searchData[key][j], _title = cur.title;
+        if ((result[key] === undefined || result[key] && result[key].length < 4 )
+          && _title.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+          if (result[key] === undefined) {
+            result[key] = [];
+          }
+          result[key].push(cur);
+        }
+      }
+    }
+    return result;
+  }
+
+  var renderHeader = memorize(function(header) {
+    return $('<p class="search-result__header">' + header + '</p>');
+  });
+
+  var renderItem = function(index, title, url) {
+    return $('<li class="search-result__item" data-index="' + index + '"><a class="button" href="' + url + '">' + title + '</a></li>');
+  };
+
+  function render(data) {
+    if (!data) { return null; }
+    var $root = $('<ul></ul>'), i, j, key, keys, cur, itemIndex = 0;
+    keys = Object.keys(data);
+    for (i = 0; i < keys.length; i++) {
+      key = keys[i];
+      $root.append(renderHeader(key));
+      for (j = 0; j < data[key].length; j++) {
+        cur = data[key][j];
+        $root.append(renderItem(itemIndex++, cur.title, cur.url));
+      }
+    }
+    return $root;
+  }
+
+  // search box
+  var $result = $('.js-search-result'), $resultItems;
+  var lastActiveIndex, activeIndex;
+
+  function clear() {
+    $result.html(null);
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+  }
+  function onInputNotEmpty(val) {
+    $result.html(render(searchByQuery(val)));
+    $resultItems = $('.search-result__item'); activeIndex = 0;
+    $resultItems.eq(0).addClass('active');
+  }
+
+  search.clear = clear;
+  search.onInputNotEmpty = onInputNotEmpty;
+
+  function updateResultItems() {
+    lastActiveIndex >= 0 && $resultItems.eq(lastActiveIndex).removeClass('active');
+    activeIndex >= 0 && $resultItems.eq(activeIndex).addClass('active');
+  }
+
+  function moveActiveIndex(direction) {
+    var itemsCount = $resultItems ? $resultItems.length : 0;
+    if (itemsCount > 1) {
+      lastActiveIndex = activeIndex;
+      if (direction === 'up') {
+        activeIndex = (activeIndex - 1 + itemsCount) % itemsCount;
+      } else if (direction === 'down') {
+        activeIndex = (activeIndex + 1 + itemsCount) % itemsCount;
+      }
+      updateResultItems();
+    }
+  }
+
+  // Char Code: 13  Enter, 37  ⬅, 38  ⬆, 39  ➡, 40  ⬇
+  $(window).on('keyup', function(e) {
+    var modalVisible = search.getModalVisible && search.getModalVisible();
+    if (modalVisible) {
+      if (e.which === 38) {
+        modalVisible && moveActiveIndex('up');
+      } else if (e.which === 40) {
+        modalVisible && moveActiveIndex('down');
+      } else if (e.which === 13) {
+        modalVisible && $resultItems && activeIndex >= 0 && $resultItems.eq(activeIndex).children('a')[0].click();
+      }
+    }
+  });
+
+  $result.on('mouseover', '.search-result__item > a', function() {
+    var itemIndex = $(this).parent().data('index');
+    itemIndex >= 0 && (lastActiveIndex = activeIndex, activeIndex = itemIndex, updateResultItems());
+  });
+});
+</script>
+</div></div>
+
+
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function scrollToAnchor(anchor, duration, callback) {
+      var $root = this;
+      $root.animate({ scrollTop: $(anchor).position().top }, duration, function() {
+        window.history.replaceState(null, '', window.location.href.split('#')[0] + anchor);
+        callback && callback();
+      });
+    }
+    $.fn.scrollToAnchor = scrollToAnchor;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function affix(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroll,
+        offsetBottom = 0, scrollTarget = window, scroll = window.document, disabled = false, isOverallScroller = true,
+        rootTop, rootLeft, rootHeight, scrollBottom, rootBottomTop,
+        hasInit = false, curState;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.offsetBottom && (offsetBottom = _options.offsetBottom);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroll && (scroll = _options.scroll);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $scrollTarget = $(scrollTarget);
+        isOverallScroller = window.isOverallScroller($scrollTarget[0]);
+        $scroll = $(scroll);
+      }
+      function preCalc() {
+        top();
+        rootHeight = $root.outerHeight();
+        rootTop = $root.offset().top + (isOverallScroller ? 0 :  $scrollTarget.scrollTop());
+        rootLeft = $root.offset().left;
+      }
+      function calc(needPreCalc) {
+        needPreCalc && preCalc();
+        scrollBottom = $scroll.outerHeight() - offsetBottom - rootHeight;
+        rootBottomTop = scrollBottom - rootTop;
+      }
+      function top() {
+        if (curState !== 'top') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: 0
+          });
+          curState = 'top';
+        }
+      }
+      function fixed() {
+        if (curState !== 'fixed') {
+          $root.addClass('fixed').css({
+            left: rootLeft + 'px',
+            top: 0
+          });
+          curState = 'fixed';
+        }
+      }
+      function bottom() {
+        if (curState !== 'bottom') {
+          $root.removeClass('fixed').css({
+            left: 0,
+            top: rootBottomTop + 'px'
+          });
+          curState = 'bottom';
+        }
+      }
+      function setState() {
+        var scrollTop = $scrollTarget.scrollTop();
+        if (scrollTop >= rootTop && scrollTop <= scrollBottom) {
+          fixed();
+        } else if (scrollTop < rootTop) {
+          top();
+        } else {
+          bottom();
+        }
+      }
+      function init() {
+        if(!hasInit) {
+          var interval, timeout;
+          calc(true); setState();
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState();
+          });
+          $window.on('resize', function() {
+            disabled || (calc(true), setState());
+          });
+          hasInit = true;
+        }
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions,
+        refresh: function() {
+          calc(true, { animation: false }); setState();
+        }
+      };
+    }
+    $.fn.affix = affix;
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    function toc(options) {
+      var $root = this, $window = $(window), $scrollTarget, $scroller, $tocUl = $('<ul class="toc toc--ellipsis"></ul>'), $tocLi, $headings, $activeLast, $activeCur,
+        selectors = 'h1,h2,h3', container = 'body', scrollTarget = window, scroller = 'html, body', disabled = false,
+        headingsPos, scrolling = false, hasRendered = false, hasInit = false;
+
+      function setOptions(options) {
+        var _options = options || {};
+        _options.selectors && (selectors = _options.selectors);
+        _options.container && (container = _options.container);
+        _options.scrollTarget && (scrollTarget = _options.scrollTarget);
+        _options.scroller && (scroller = _options.scroller);
+        _options.disabled !== undefined && (disabled = _options.disabled);
+        $headings = $(container).find(selectors).filter('[id]');
+        $scrollTarget = $(scrollTarget);
+        $scroller = $(scroller);
+      }
+      function calc() {
+        headingsPos = [];
+        $headings.each(function() {
+          headingsPos.push(Math.floor($(this).position().top));
+        });
+      }
+      function setState(element, disabled) {
+        var scrollTop = $scrollTarget.scrollTop(), i;
+        if (disabled || !headingsPos || headingsPos.length < 1) { return; }
+        if (element) {
+          $activeCur = element;
+        } else {
+          for (i = 0; i < headingsPos.length; i++) {
+            if (scrollTop >= headingsPos[i]) {
+              $activeCur = $tocLi.eq(i);
+            } else {
+              $activeCur || ($activeCur = $tocLi.eq(i));
+              break;
+            }
+          }
+        }
+        $activeLast && $activeLast.removeClass('active');
+        ($activeLast = $activeCur).addClass('active');
+      }
+      function render() {
+        if(!hasRendered) {
+          $root.append($tocUl);
+          $headings.each(function() {
+            var $this = $(this);
+            $tocUl.append($('<li></li>').addClass('toc-' + $this.prop('tagName').toLowerCase())
+              .append($('<a></a>').text($this.text()).attr('href', '#' + $this.prop('id'))));
+          });
+          $tocLi = $tocUl.children('li');
+          $tocUl.on('click', 'a', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            scrolling = true;
+            setState($this.parent());
+            $scroller.scrollToAnchor($this.attr('href'), 400, function() {
+              scrolling = false;
+            });
+          });
+        }
+        hasRendered = true;
+      }
+      function init() {
+        var interval, timeout;
+        if(!hasInit) {
+          render(); calc(); setState(null, scrolling);
+          // run calc every 100 millisecond
+          interval = setInterval(function() {
+            calc();
+          }, 100);
+          timeout = setTimeout(function() {
+            clearInterval(interval);
+          }, 45000);
+          window.pageLoad.then(function() {
+            setTimeout(function() {
+              clearInterval(interval);
+              clearTimeout(timeout);
+            }, 3000);
+          });
+          $scrollTarget.on('scroll', function() {
+            disabled || setState(null, scrolling);
+          });
+          $window.on('resize', window.throttle(function() {
+            if (!disabled) {
+              render(); calc(); setState(null, scrolling);
+            }
+          }, 100));
+        }
+        hasInit = true;
+      }
+
+      setOptions(options);
+      if (!disabled) {
+        init();
+      }
+      $window.on('resize', window.throttle(function() {
+        init();
+      }, 200));
+      return {
+        setOptions: setOptions
+      };
+    }
+    $.fn.toc = toc;
+  });
+})();
+/*(function () {
+
+})();*/
+</script>
+    </div>
+    <script>(function () {
+  var $root = document.getElementsByClassName('root')[0];
+  if (window.hasEvent('touchstart')) {
+    $root.dataset.isTouch = true;
+    document.addEventListener('touchstart', function(){}, false);
+  }
+})();
+</script>
+  </body>
+</html>
+
