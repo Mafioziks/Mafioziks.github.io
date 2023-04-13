@@ -21,8 +21,8 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      # - name: Build static page
-      #   run: bundle exec jekill build
+      - name: Build static page
+        run: bundle exec jekill build
 
       # - name: Upload Artifacts
       #   uses: actions/upload-pages-artifact
