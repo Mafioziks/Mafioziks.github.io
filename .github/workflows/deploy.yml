@@ -19,7 +19,7 @@ jobs:
           ruby-version: "3.1"
 
       - name: Install dependencies
-        run: bundle install
+        run: bundle install --path vendor/bundle
 
       - name: Build static page
         run: bundle exec jekill build
