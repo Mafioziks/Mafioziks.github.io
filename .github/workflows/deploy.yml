@@ -22,7 +22,7 @@ jobs:
         run: bundle install --path vendor/bundle
 
       - name: Build static page
-        run: bundle exec jekill build
+        run: bundle install && bundle exec jekill build
 
       # - name: Upload Artifacts
       #   uses: actions/upload-pages-artifact
