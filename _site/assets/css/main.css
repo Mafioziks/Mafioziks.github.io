@@ -6463,7 +6463,8 @@ html,
   font-size: 1.8rem;
 }
 
-/* start custom scss snippet */
-/* end custom scss snippet */
+.card {
+  border: solid 1px aquamarine;
+}
 
 /*# sourceMappingURL=main.css.map */
