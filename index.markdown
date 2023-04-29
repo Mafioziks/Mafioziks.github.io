@@ -5,7 +5,7 @@
 layout: home
 ---
 
-# Welcome!
+# Welcome
 
 This is personal homepage. Currently still in development. Using Github Pages to set up this site.
 
@@ -13,7 +13,7 @@ Site will contain blog part where will be written about personal projects and in
 
 Hopefully this page will grow nicely.
 
-# Projects
+## Projects
 
 Here are some of interesting projects I have worked on.
 
@@ -26,7 +26,8 @@ Here are some of interesting projects I have worked on.
                         <h4>JEB</h4>
                     </div>
                     <p>
-                        Project has been a work on existing plugin by advancing it. Also added some documentation to easier start working with it.
+                        Project has been a work on existing plugin by advancing it.
+                        Also added some documentation to easier start working with it.
                     </p>
                 </div>
             </div>
@@ -47,4 +48,10 @@ Here are some of interesting projects I have worked on.
         </div>
         </a>
     </div>
+</div>
+
+## Latest posts
+
+<div>
+    {%- include article-list.html articles=site.posts type='item' show_info=true reverse=true group_by='year' at_most=5 -%}
 </div>
