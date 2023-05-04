@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-04-29T14:06:07+03:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mafioziks</title><subtitle>Personal project and blog page.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2023-05-04T23:29:07+03:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Mafioziks</title><subtitle>Personal project and blog page.
 </subtitle><author><name>Toms Teteris</name></author><entry><title type="html">Creating personal Github Pages site</title><link href="http://localhost:4000/projects/update/2023/04/28/github-pages-site.html" rel="alternate" type="text/html" title="Creating personal Github Pages site" /><published>2023-04-28T02:20:00+03:00</published><updated>2023-04-28T02:20:00+03:00</updated><id>http://localhost:4000/projects/update/2023/04/28/github-pages-site</id><content type="html" xml:base="http://localhost:4000/projects/update/2023/04/28/github-pages-site.html"><![CDATA[<p class="warning">This post is still in progress.</p>
 
-<h1 id="idea">Idea</h1>
+<h2 id="idea">Idea</h2>
 
 <p>I have looked on different options how to create and host personal page. As I want it to be stable and safe enough I decided to go with Github Pages.</p>
 
-<h1 id="process">Process</h1>
+<h2 id="process">Process</h2>
 
-<h2 id="choosing-theme">Choosing theme</h2>
+<h3 id="choosing-theme">Choosing theme</h3>
 
 <p>From looking in Jekyll theme list was hard to find something I was interested. But when I found one I understood that I need to update it much more.
 I Understood that this theme is just base to start of. Theme I found as starting point is <strong>TeXt</strong>.</p>
 
-<h2 id="updating-look">Updating look</h2>
+<h3 id="updating-look">Updating look</h3>
 
 <p>First steps in updating site was to try to add blocks of information related to projects that I want to get into more. So I tried to add information about them.
 From looking in theme homepage I found some good tips but because of choosen color pallete elements did not looked as nice as I was planning. So I explored more
